@@ -2,10 +2,16 @@ class Query:
     def __init__(self, model):
         self.model = model
         self.filters = []
-
     def filter(self, **kwargs):
-        self.filters.append(kwargs)
+        """
+        Add filter conditions to the query.
+        """
+        for key, value in kwargs.items():
+            self.filters.append((key, value))
         return self
+    # def filter(self, **kwargs):
+    #     self.filters.append(kwargs)
+    #     return self
 
     def all(self):
         # This method would interact with the database to retrieve all records
