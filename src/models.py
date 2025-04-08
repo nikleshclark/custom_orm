@@ -1,8 +1,44 @@
 from src.fields import IntegerField, StringField
 from src.query import Query
+from src.utils import connect_to_database
 class BaseModel:
+    
+    def __init__(self, **kwargs):
+        """
+        Initialize the model instance with field values.
+        """
+        for field_name, field in self.__class__.__dict__.items():
+            if isinstance(field, (IntegerField, StringField)):
+                setattr(self, field_name, kwargs.get(field_name, None))
+    _connection = connect_to_database("database.db") 
+    @classmethod
+    def create_table(cls):
+        """
+        Create a table for the model in the database.
+        """
+        fields = []
+        for field_name, field in cls.__dict__.items():
+            if isinstance(field, (IntegerField, StringField)):
+                column = f"{field_name} {field.field_type}"
+                if field.primary_key:
+                    column += " PRIMARY KEY"
+                fields.append(column)
+        fields_sql = ", ".join(fields)
+        query = f"CREATE TABLE IF NOT EXISTS {cls.__name__.lower()} ({fields_sql});"
+        with cls._connection:
+            cls._connection.execute(query)
     def save(self):
-        pass
+        fields = []
+        values = []
+        for field_name, field in self.__class__.__dict__.items():
+            if isinstance(field, (IntegerField, StringField)):
+                fields.append(field_name)
+                values.append(getattr(self, field_name, None))
+        fields_sql = ", ".join(fields)
+        placeholders = ", ".join(["?"] * len(values))
+        query = f"INSERT OR REPLACE INTO {self.__class__.__name__.lower()} ({fields_sql}) VALUES ({placeholders});"
+        with self._connection:
+            self._connection.execute(query, values)
 
     def delete(self):
         pass
@@ -22,6 +58,5 @@ class Post(BaseModel):
     content = StringField(max_length=500)
     author_id = IntegerField()  # Foreign key to User model
 
-    @classmethod
-    def get_author(cls):
-        return User.query().filter(User.id == cls.author_id)
+    def get_author(self):
+        return User.query().filter(id=self.author_id).first()
