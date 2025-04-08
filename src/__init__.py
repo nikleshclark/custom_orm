@@ -3,6 +3,6 @@
 from .base import BaseModel
 from .fields import StringField, IntegerField, DateField
 from .query import Query
-from .utils import connect, serialize
+from .utils import connect_to_database, serialize
 
-__all__ = ['BaseModel', 'StringField', 'IntegerField', 'DateField', 'Query', 'connect', 'serialize']
+__all__ = ['BaseModel', 'StringField', 'IntegerField', 'DateField', 'Query', 'connect_to_database', 'serialize']

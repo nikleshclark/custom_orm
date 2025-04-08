@@ -1,8 +1,8 @@
-def connect_to_database(db_url):
-    # Logic to establish a connection to the database
-    pass
+import sqlite3
+def connect_to_database(db_url=":memory:"):
+    return sqlite3.connect(db_url)
 
-def serialize_data(data):
+def serialize(data):
     # Logic to serialize data for storage or transmission
     pass
 

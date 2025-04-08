@@ -1,3 +1,5 @@
+from src.fields import IntegerField, StringField
+from src.query import Query
 class BaseModel:
     def save(self):
         pass
@@ -10,14 +12,14 @@ class BaseModel:
         return Query(cls)
 
 class User(BaseModel):
-    id = IntegerField(primary_key=True)
-    username = StringField()
-    email = StringField()
+    id = IntegerField()
+    username = StringField(max_length=50)
+    email = StringField(max_length=100)
 
 class Post(BaseModel):
-    id = IntegerField(primary_key=True)
-    title = StringField()
-    content = StringField()
+    id = IntegerField()
+    title = StringField(max_length=200)
+    content = StringField(max_length=500)
     author_id = IntegerField()  # Foreign key to User model
 
     @classmethod
