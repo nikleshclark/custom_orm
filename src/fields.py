@@ -19,8 +19,8 @@ class StringField(Field):
 
 
 class IntegerField(Field):
-    def __init__(self, name="Integer Field"):
-        super().__init__(field_type="INTEGER")
+    def __init__(self, name="Integer Field",primary_key=False):
+        super().__init__(field_type="INTEGER", primary_key=primary_key)
         self.name = name
 
     def validate(self, value):

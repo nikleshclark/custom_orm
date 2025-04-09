@@ -36,9 +36,12 @@ class BaseModel:
                 values.append(getattr(self, field_name, None))
         fields_sql = ", ".join(fields)
         placeholders = ", ".join(["?"] * len(values))
-        query = f"INSERT OR REPLACE INTO {self.__class__.__name__.lower()} ({fields_sql}) VALUES ({placeholders});"
-        with self._connection:
-            self._connection.execute(query, values)
+        query = f"INSERT INTO {self.__class__.__name__.lower()} ({fields_sql}) VALUES ({placeholders});"
+        try:
+            with self._connection:
+                self._connection.execute(query, values)
+        except Exception as e:
+            raise ValueError(f"Failed to save {self.__class__.__name__} instance: {e}")
 
     def delete(self):
         pass
@@ -48,12 +51,12 @@ class BaseModel:
         return Query(cls)
 
 class User(BaseModel):
-    id = IntegerField()
+    id = IntegerField(primary_key=True)
     username = StringField(max_length=50)
     email = StringField(max_length=100)
 
 class Post(BaseModel):
-    id = IntegerField()
+    id = IntegerField(primary_key=True)
     title = StringField(max_length=200)
     content = StringField(max_length=500)
     author_id = IntegerField()  # Foreign key to User model
